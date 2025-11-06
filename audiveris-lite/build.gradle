@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id("com.gradleup.shadow") version "9.2.2"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.osgeo.org/repository/release/" }
+    maven { url "https://maven.scijava.org/content/repositories/public/" }
+}
+
+dependencies {
+    // Núcleo OMR do Audiveris
+    implementation project(':app')
+
+    // OCR
+    implementation 'net.sourceforge.tess4j:tess4j:5.10.0'
+
+    // Utilidades
+    implementation 'commons-io:commons-io:2.15.1'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+    // Logging
+    implementation 'ch.qos.logback:logback-classic:1.4.14'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+
+    // Evita conflitos
+    configurations.all {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
+}
+
+// Define a classe principal
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'org.audiveris.lite.AudiverisLite'
+        )
+    }
+}
+
+// Task shadow para gerar o .jar completo
+tasks.named('shadowJar') {
+    archiveBaseName.set('audiveris-lite')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
